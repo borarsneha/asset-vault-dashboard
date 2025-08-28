@@ -14,7 +14,161 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      investments: {
+        Row: {
+          created_at: string
+          current_price: number | null
+          id: string
+          name: string
+          portfolio_id: string
+          purchase_price: number
+          quantity: number
+          symbol: string
+          type: Database["public"]["Enums"]["investment_type"]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          current_price?: number | null
+          id?: string
+          name: string
+          portfolio_id: string
+          purchase_price: number
+          quantity: number
+          symbol: string
+          type?: Database["public"]["Enums"]["investment_type"]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          current_price?: number | null
+          id?: string
+          name?: string
+          portfolio_id?: string
+          purchase_price?: number
+          quantity?: number
+          symbol?: string
+          type?: Database["public"]["Enums"]["investment_type"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "investments_portfolio_id_fkey"
+            columns: ["portfolio_id"]
+            isOneToOne: false
+            referencedRelation: "portfolios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      portfolios: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          full_name: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      transactions: {
+        Row: {
+          created_at: string
+          id: string
+          investment_id: string | null
+          name: string
+          portfolio_id: string
+          price: number
+          quantity: number
+          symbol: string
+          total_amount: number
+          transaction_date: string
+          type: Database["public"]["Enums"]["transaction_type"]
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          investment_id?: string | null
+          name: string
+          portfolio_id: string
+          price: number
+          quantity: number
+          symbol: string
+          total_amount: number
+          transaction_date?: string
+          type: Database["public"]["Enums"]["transaction_type"]
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          investment_id?: string | null
+          name?: string
+          portfolio_id?: string
+          price?: number
+          quantity?: number
+          symbol?: string
+          total_amount?: number
+          transaction_date?: string
+          type?: Database["public"]["Enums"]["transaction_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transactions_investment_id_fkey"
+            columns: ["investment_id"]
+            isOneToOne: false
+            referencedRelation: "investments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transactions_portfolio_id_fkey"
+            columns: ["portfolio_id"]
+            isOneToOne: false
+            referencedRelation: "portfolios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +177,14 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      investment_type:
+        | "stock"
+        | "bond"
+        | "mutual_fund"
+        | "etf"
+        | "crypto"
+        | "other"
+      transaction_type: "buy" | "sell"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +311,16 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      investment_type: [
+        "stock",
+        "bond",
+        "mutual_fund",
+        "etf",
+        "crypto",
+        "other",
+      ],
+      transaction_type: ["buy", "sell"],
+    },
   },
 } as const
