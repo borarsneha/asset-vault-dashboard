@@ -169,6 +169,39 @@ export type Database = {
           },
         ]
       }
+      watchlist: {
+        Row: {
+          added_at: string
+          id: string
+          name: string
+          notes: string | null
+          portfolio_id: string | null
+          sector: string | null
+          symbol: string
+          user_id: string
+        }
+        Insert: {
+          added_at?: string
+          id?: string
+          name: string
+          notes?: string | null
+          portfolio_id?: string | null
+          sector?: string | null
+          symbol: string
+          user_id: string
+        }
+        Update: {
+          added_at?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          portfolio_id?: string | null
+          sector?: string | null
+          symbol?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

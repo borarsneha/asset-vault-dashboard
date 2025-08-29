@@ -12,6 +12,8 @@ import { AddInvestmentDialog } from '@/components/AddInvestmentDialog';
 import { TransactionHistory } from '@/components/TransactionHistory';
 import { InvestmentsList } from '@/components/InvestmentsList';
 import { RecommendedStocks } from '@/components/RecommendedStocks';
+import { AddWatchlistDialog } from '@/components/AddWatchlistDialog';
+import { WatchlistTable } from '@/components/WatchlistTable';
 import { ThemeToggle } from '@/components/ThemeToggle';
 
 interface Portfolio {
@@ -48,6 +50,7 @@ const Dashboard = () => {
   const [investments, setInvestments] = useState<Investment[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
+  const [watchlistRefresh, setWatchlistRefresh] = useState(0);
 
   if (!user) {
     return <Navigate to="/auth" replace />;
@@ -213,6 +216,7 @@ const Dashboard = () => {
             <TabsTrigger value="investments">Investments</TabsTrigger>
             <TabsTrigger value="transactions">Transaction History</TabsTrigger>
             <TabsTrigger value="recommendations">Recommendations</TabsTrigger>
+            <TabsTrigger value="watchlist">Watchlist</TabsTrigger>
           </TabsList>
 
           <TabsContent value="investments" className="space-y-4">
@@ -241,8 +245,29 @@ const Dashboard = () => {
             <RecommendedStocks 
               investments={investments} 
               portfolioId={portfolio?.id}
-              onAddInvestment={fetchData}
+              onAddInvestment={() => {
+                fetchData();
+                setWatchlistRefresh(prev => prev + 1);
+              }}
             />
+          </TabsContent>
+
+          <TabsContent value="watchlist">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle>Watchlist</CardTitle>
+                <AddWatchlistDialog 
+                  portfolioId={portfolio?.id || ""} 
+                  onWatchlistAdded={() => setWatchlistRefresh(prev => prev + 1)}
+                />
+              </CardHeader>
+              <CardContent>
+                <WatchlistTable 
+                  portfolioId={portfolio?.id || ""} 
+                  refreshTrigger={watchlistRefresh}
+                />
+              </CardContent>
+            </Card>
           </TabsContent>
         </Tabs>
       </main>

@@ -3,6 +3,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { TrendingUp, Plus } from 'lucide-react'
 import { useToast } from '@/hooks/use-toast'
+import { supabase } from '@/integrations/supabase/client'
 
 interface Investment {
   id: string
@@ -87,11 +88,38 @@ export function RecommendedStocks({ investments, portfolioId, onAddInvestment }:
 
   const recommendedStocks = generateRecommendations()
 
-  const handleAddToWatchlist = (stock: RecommendedStock) => {
-    toast({
-      title: 'Added to Watchlist',
-      description: `${stock.symbol} has been added to your watchlist`,
-    })
+  const handleAddToWatchlist = async (stock: RecommendedStock) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not authenticated");
+
+      const { error } = await supabase.from("watchlist").insert({
+        user_id: user.id,
+        portfolio_id: portfolioId,
+        symbol: stock.symbol,
+        name: stock.name,
+        sector: stock.sector,
+        notes: `Recommended based on your ${stock.reason.toLowerCase()}`,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Added to Watchlist",
+        description: `${stock.symbol} has been added to your watchlist.`,
+      });
+
+      if (onAddInvestment) {
+        onAddInvestment();
+      }
+    } catch (error) {
+      console.error("Error adding to watchlist:", error);
+      toast({
+        title: "Error",
+        description: "Failed to add to watchlist. Please try again.",
+        variant: "destructive",
+      });
+    }
   }
 
   if (investments.length === 0) {
