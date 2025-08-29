@@ -11,6 +11,8 @@ import { LogOut, TrendingUp, TrendingDown, DollarSign, PieChart } from 'lucide-r
 import { AddInvestmentDialog } from '@/components/AddInvestmentDialog';
 import { TransactionHistory } from '@/components/TransactionHistory';
 import { InvestmentsList } from '@/components/InvestmentsList';
+import { RecommendedStocks } from '@/components/RecommendedStocks';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 interface Portfolio {
   id: string;
@@ -140,10 +142,13 @@ const Dashboard = () => {
       <header className="border-b bg-card">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <h1 className="text-2xl font-bold">Portfolio Dashboard</h1>
-          <Button onClick={handleSignOut} variant="outline">
-            <LogOut className="w-4 h-4 mr-2" />
-            Sign Out
-          </Button>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <Button onClick={handleSignOut} variant="outline">
+              <LogOut className="w-4 h-4 mr-2" />
+              Sign Out
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -207,6 +212,7 @@ const Dashboard = () => {
           <TabsList>
             <TabsTrigger value="investments">Investments</TabsTrigger>
             <TabsTrigger value="transactions">Transaction History</TabsTrigger>
+            <TabsTrigger value="recommendations">Recommendations</TabsTrigger>
           </TabsList>
 
           <TabsContent value="investments" className="space-y-4">
@@ -226,6 +232,17 @@ const Dashboard = () => {
               <h2 className="text-xl font-semibold">Transaction History</h2>
             </div>
             <TransactionHistory transactions={transactions} />
+          </TabsContent>
+
+          <TabsContent value="recommendations">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold">Stock Recommendations</h2>
+            </div>
+            <RecommendedStocks 
+              investments={investments} 
+              portfolioId={portfolio?.id}
+              onAddInvestment={fetchData}
+            />
           </TabsContent>
         </Tabs>
       </main>
